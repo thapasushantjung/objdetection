@@ -1,0 +1,17 @@
+# PPE Shield AI - Object Detection
+*.pt
+*.onnx
+*.engine
+__pycache__/
+*.pyc
+.env
+venv/
+.venv/
+node_modules/
+*.egg-info/
+dist/
+build/
+runs/
+wandb/
+.DS_Store
+*.log
