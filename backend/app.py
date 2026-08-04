@@ -35,3 +35,8 @@ CLASS_COLORS = {
     'vehicle': '#2196F3',       
 }
 
+        detections=dets,
+        image_width=w,
+        image_height=h,
+        inference_time_ms=inf_time,
+        total_detections=len(dets)
