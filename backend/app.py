@@ -35,6 +35,21 @@ CLASS_COLORS = {
     'vehicle': '#2196F3',       
 }
 
+app = FastAPI(title="PPE Detection backend")
+
+# allow frontend to call us during local dev
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # FIXME: don't use * in prod
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+MODEL_PATH = os.getenv("MODEL_PATH", "weights/best.pt")
+model = None # global model to avoid cold starts
+
+@app.on_event("startup")
         detections=dets,
         image_width=w,
         image_height=h,
