@@ -50,6 +50,25 @@ MODEL_PATH = os.getenv("MODEL_PATH", "weights/best.pt")
 model = None # global model to avoid cold starts
 
 @app.on_event("startup")
+def load_yolo():
+    global model
+    try:
+        logger.info(f"trying to load weights from {MODEL_PATH}")
+        if os.path.exists(MODEL_PATH):
+            model = YOLO(MODEL_PATH)
+            logger.info("loaded model!")
+        else:
+            logger.warning("couldn't find best.pt. API calls will crash!")
+    except Exception as e:
+        logger.error(f"model load failed: {e}")
+
+# --- AUTH ---
+security = HTTPBearer()
+
+def check_auth(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    # super basic auth for now until we add a real db
+    if credentials.credentials != "fake-jwt-token-123":
+        raise HTTPException(status_code=401, detail="bad token")
         detections=dets,
         image_width=w,
         image_height=h,
