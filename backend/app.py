@@ -69,6 +69,30 @@ def check_auth(credentials: HTTPAuthorizationCredentials = Depends(security)):
     # super basic auth for now until we add a real db
     if credentials.credentials != "fake-jwt-token-123":
         raise HTTPException(status_code=401, detail="bad token")
+    return credentials.credentials
+
+class LoginReq(BaseModel):
+    username: str
+    password: str
+
+@app.post("/api/login")
+def do_login(req: LoginReq):
+    # hardcoded admin for testing
+    if req.username == "admin" and req.password == "admin":
+        return {"token": "fake-jwt-token-123"}
+    raise HTTPException(status_code=401, detail="wrong user/pass")
+
+# --- API ---
+class UrlReq(BaseModel):
+    url: str # just using str instead of HttpUrl cause it's easier
+    confidence: float = 0.25
+
+class BBox(BaseModel):
+    x1: float
+    y1: float
+    x2: float
+    y2: float
+
         detections=dets,
         image_width=w,
         image_height=h,
