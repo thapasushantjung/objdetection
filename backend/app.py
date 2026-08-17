@@ -93,6 +93,58 @@ class BBox(BaseModel):
     x2: float
     y2: float
 
+class Det(BaseModel):
+    class_name: str
+    confidence: float
+    bbox: BBox
+    color: str
+
+class DetRes(BaseModel):
+    detections: List[Det]
+    image_width: int
+    image_height: int
+    inference_time_ms: float
+    total_detections: int
+
+def run_inference(img, conf):
+    # helper to dry up the code
+    if not model:
+        raise HTTPException(status_code=503, detail="model not ready")
+    
+    # fix weird image modes (like RGBA pngs)
+    if img.mode != "RGB":
+        img = img.convert("RGB")
+        
+    w, h = img.size
+    t0 = time.time()
+    
+    try:
+        # print("running predict...")
+        res = model.predict(source=img, conf=conf, save=False)
+    except Exception as e:
+        logger.error(f"yolo error: {e}")
+        raise HTTPException(status_code=500, detail="inference blew up")
+        
+    inf_time = (time.time() - t0) * 1000
+    
+    dets = []
+    for r in res:
+        for b in r.boxes:
+            x1, y1, x2, y2 = b.xyxy[0].tolist()
+            c = float(b.conf[0])
+            c_idx = int(b.cls[0])
+            
+            # get name, fallback if names not set in model
+            c_name = r.names[c_idx] if (r.names and c_idx in r.names) else PPE_CLASSES[c_idx] if c_idx < len(PPE_CLASSES) else f"unknown_{c_idx}"
+            col = CLASS_COLORS.get(c_name, "#FFF")
+            
+            dets.append(Det(
+                class_name=c_name,
+                confidence=c,
+                bbox=BBox(x1=x1, y1=y1, x2=x2, y2=y2),
+                color=col
+            ))
+            
         detections=dets,
         image_width=w,
         image_height=h,
