@@ -145,6 +145,23 @@ def run_inference(img, conf):
                 color=col
             ))
             
+    return DetRes(
+        detections=dets,
+        image_width=w,
+        image_height=h,
+        inference_time_ms=inf_time,
+        total_detections=len(dets)
+    )
+
+@app.post("/api/detect", response_model=DetRes)
+async def handle_detect(
+    file: Optional[UploadFile] = File(None),
+    url: Optional[str] = Form(None),
+    confidence: float = Query(0.25),
+    token: str = Depends(check_auth)
+):
+    if not file and not url:
+        raise HTTPException(400, "need a file or url")
         detections=dets,
         image_width=w,
         image_height=h,
