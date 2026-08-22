@@ -162,8 +162,3 @@ async def handle_detect(
 ):
     if not file and not url:
         raise HTTPException(400, "need a file or url")
-        detections=dets,
-        image_width=w,
-        image_height=h,
-        inference_time_ms=inf_time,
-        total_detections=len(dets)
