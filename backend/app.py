@@ -162,3 +162,52 @@ async def handle_detect(
 ):
     if not file and not url:
         raise HTTPException(400, "need a file or url")
+        
+    if file:
+        try:
+            buf = await file.read()
+            img = Image.open(io.BytesIO(buf))
+        except Exception:
+            raise HTTPException(400, "bad image file")
+    elif url:
+        try:
+            r = requests.get(url, stream=True, timeout=10)
+            r.raise_for_status()
+            img = Image.open(io.BytesIO(r.content))
+        except Exception as e:
+            logger.error(f"failed to grab {url}: {e}")
+            raise HTTPException(400, "couldnt fetch url")
+            
+    return run_inference(img, confidence)
+
+@app.post("/api/detect-url", response_model=DetRes)
+def handle_detect_url(req: UrlReq, token: str = Depends(check_auth)):
+    try:
+        r = requests.get(req.url, stream=True, timeout=10)
+        r.raise_for_status()
+        img = Image.open(io.BytesIO(r.content))
+    except Exception:
+        raise HTTPException(400, "failed to fetch url")
+        
+    return run_inference(img, req.confidence)
+
+@app.get("/api/health")
+def health():
+    # simple ping
+    return {"ok": True, "model_up": model is not None}
+
+@app.get("/api/model-info")
+def minfo():
+    return {
+        "type": "yolo8",
+        "classes": PPE_CLASSES,
+        "loaded": model is not None,
+    }
+
+# static frontend mounting
+# hack to figure out absolute path to frontend dir
+fend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend'))
+if os.path.exists(fend_path):
+    app.mount("/", StaticFiles(directory=fend_path, html=True), name="frontend")
+else:
+    logger.warning("frontend dir missing, ignoring static mount")
