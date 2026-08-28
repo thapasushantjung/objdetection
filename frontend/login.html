@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - PPE Shield</title>
+    <!-- tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- fontawesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        // TODO: move this config to a separate file later if it gets too big
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        dark: { 900: '#0B0F19', 800: '#111827' },
+                        accent: { cyan: '#00F0FF', purple: '#8A2BE2' }
+                    },
+                    // cool background pattern I found online
+                    backgroundImage: {
+                        'mesh': 'url("data:image/svg+xml,%3Csvg width=\'100\' height=\'100\' viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z\' fill=\'%23ffffff\' fill-opacity=\'0.03\' fill-rule=\'evenodd\'/%3E%3C/svg%3E")',
+24:                     }
+25:                 }
+26:             }
+27:         }
+28:     </script>
+29:     <style>
+30:         body { background-color: #0B0F19; color: #E5E7EB; }
+31:         .glass-panel {
+32:             background: rgba(17, 24, 39, 0.6);
+33:             backdrop-filter: blur(16px);
+34:             -webkit-backdrop-filter: blur(16px);
+35:             border: 1px solid rgba(255, 255, 255, 0.08);
+36:             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+37:         }
+38:     </style>
+39: </head>
+40: <body class="font-sans antialiased min-h-screen bg-mesh bg-fixed selection:bg-accent-cyan selection:text-dark-900 flex items-center justify-center relative">
+41:     <!-- Background glow effects -->
+42:     <div class="absolute top-0 left-1/4 w-96 h-96 bg-accent-purple rounded-full mix-blend-screen filter blur-[128px] opacity-20 z-0 animate-pulse"></div>
+43:     <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-accent-cyan rounded-full mix-blend-screen filter blur-[128px] opacity-20 z-0"></div>
+44: 
+45:     <div class="glass-panel p-8 rounded-2xl z-10 w-full max-w-md">
+46:         <div class="text-center mb-8">
+47:             <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-accent-cyan via-accent-purple to-accent-cyan tracking-tight mb-2">PPE Shield</h1>
+48:             <p class="text-gray-400 text-sm">Please sign in first</p>
+49:         </div>
+50: 
+51:         <form id="login-form" class="flex flex-col gap-5">
+52:             <div>
+53:                 <label class="block text-sm font-medium text-gray-400 mb-1">Username</label>
+54:                 <div class="relative">
+55:                     <i class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+56:                     <input type="text" id="username" class="w-full bg-dark-900 border border-gray-700 focus:border-accent-cyan focus:ring-1 focus:ring-accent-cyan rounded-lg pl-10 pr-4 py-2.5 outline-none transition-all placeholder-gray-600" placeholder="admin">
+57:                 </div>
+58:             </div>
+59:             
+60:             <div>
+61:                 <label class="block text-sm font-medium text-gray-400 mb-1">Password</label>
+62:                 <div class="relative">
+63:                     <i class="fa-solid fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+64:                     <input type="password" id="password" class="w-full bg-dark-900 border border-gray-700 focus:border-accent-cyan focus:ring-1 focus:ring-accent-cyan rounded-lg pl-10 pr-4 py-2.5 outline-none transition-all placeholder-gray-600" placeholder="••••••••">
+65:                 </div>
+66:             </div>
+67: 
+68:             <div id="error-msg" class="hidden text-sm text-red-400 text-center bg-red-500/10 border border-red-500/30 rounded p-2"></div>
+69: 
+70:             <button type="submit" class="mt-2 w-full py-2.5 px-4 bg-gradient-to-r from-accent-cyan to-blue-500 hover:from-blue-500 hover:to-accent-purple text-white font-bold rounded-xl shadow-[0_0_15px_rgba(0,240,255,0.3)] transition-all transform hover:scale-[1.02]">
+71:                 Login
+72:             </button>
+73:         </form>
+74:     </div>
+75: 
+76:     <script>
+77:         // redirect if already got token
+78:         if (localStorage.getItem('auth_token')) {
+79:             window.location.href = 'index.html'
+80:         }
+81: 
+82:         document.getElementById('login-form').addEventListener('submit', async (e) => {
+83:             e.preventDefault()
+84:             
+85:             const errMsg = document.getElementById('error-msg')
+86:             const u = document.getElementById('username').value
+87:             const p = document.getElementById('password').value
+88:             
+89:             // reset error state
+90:             errMsg.classList.add('hidden')
+91:             
+92:             try {
+93:                 const res = await fetch('/api/login', {
+94:                     method: 'POST',
+95:                     headers: { 'Content-Type': 'application/json' },
+96:                     body: JSON.stringify({ username: u, password: p })
+97:                 })
+98:                 
+99:                 if (res.ok) {
+100:                     const data = await res.json()
+101:                     // save it so index.html can use it
+102:                     localStorage.setItem('auth_token', data.token)
+103:                     // console.log("logged in ok")
+104:                     window.location.href = 'index.html'
+105:                 } else {
+106:                     errMsg.textContent = 'Nope, wrong credentials'
+107:                     errMsg.classList.remove('hidden')
+108:                 }
+109:             } catch (err) {
+110:                 console.error(err)
+111:                 errMsg.textContent = 'Server error. Is the backend running?'
+112:                 errMsg.classList.remove('hidden')
+113:             }
+114:         })
+115:     </script>
+116: </body>
+117: </html>
