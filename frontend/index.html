@@ -223,4 +223,43 @@
                                 <i class="fa-solid fa-image text-4xl text-gray-500 mb-4 group-hover:text-accent-cyan transition-colors"></i>
                                 <p class="text-sm text-gray-300 mb-2">Drag and drop an image here</p>
                                 <p class="text-xs text-gray-500 mb-4">or click to browse files</p>
+                                <span class="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-sm font-medium border border-white/10 transition-colors">Select File</span>
+                                <input type="file" id="file-input" class="hidden" accept="image/jpeg, image/png, image/webp">
+                                
+                                <img id="preview-img" alt="Preview" class="mt-4 shadow-lg">
+                            </div>
+                        </div>
+                        
+                        <!-- URL Tab -->
+                        <div id="url-tab" class="tab-content absolute inset-0 transition-opacity duration-300 opacity-0 z-0 pointer-events-none flex flex-col">
+                            <div class="bg-dark-800/50 p-4 rounded-xl border border-white/5 flex flex-col gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-400 mb-2">Image URL</label>
+                                    <div class="flex gap-2">
+                                        <input type="text" id="url-input" placeholder="https://example.com/image.jpg" class="flex-1 bg-dark-900 border border-gray-700 focus:border-accent-cyan focus:ring-1 focus:ring-accent-cyan rounded-lg px-4 py-2 text-sm outline-none transition-all placeholder-gray-600">
+                                        <button id="load-url-btn" class="px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded-lg text-sm font-medium transition-colors">Load</button>
+                                    </div>
+                                </div>
+                                <div id="url-preview-container" class="flex-1 hidden border border-gray-700 rounded-lg overflow-hidden bg-dark-900 flex items-center justify-center p-2 min-h-[150px]">
+                                    <img id="url-preview-img" class="max-w-full max-h-[180px] object-contain rounded">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Webcam Tab -->
+                        <div id="webcam-tab" class="tab-content absolute inset-0 transition-opacity duration-300 opacity-0 z-0 pointer-events-none flex flex-col">
+                            <div class="flex-1 bg-dark-900 border border-gray-700 rounded-xl overflow-hidden relative flex flex-col items-center justify-center">
+                                <video id="webcam-video" autoplay playsinline class="w-full h-full object-cover"></video>
+                                <div id="webcam-placeholder" class="text-center p-6">
+                                    <i class="fa-solid fa-video text-3xl text-gray-600 mb-3"></i>
+                                    <p class="text-sm text-gray-400">Webcam inactive</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-3 mt-4">
+                                <button id="start-webcam" class="flex-1 px-4 py-2 bg-accent-blue/20 hover:bg-accent-blue/30 text-accent-blue border border-accent-blue/50 rounded-lg text-sm font-medium transition-colors flex justify-center items-center">
+                                    <i class="fa-solid fa-play mr-2"></i> Start
+                                </button>
+                                <button id="stop-webcam" class="flex-1 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/50 rounded-lg text-sm font-medium transition-colors flex justify-center items-center hidden">
+                                    <i class="fa-solid fa-stop mr-2"></i> Stop
+                                </button>
 </div></div></div></div></body></html>
