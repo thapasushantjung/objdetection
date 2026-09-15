@@ -262,4 +262,46 @@
                                 <button id="stop-webcam" class="flex-1 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/50 rounded-lg text-sm font-medium transition-colors flex justify-center items-center hidden">
                                     <i class="fa-solid fa-stop mr-2"></i> Stop
                                 </button>
-</div></div></div></div></body></html>
+                                <button id="capture-webcam" class="flex-1 px-4 py-2 bg-accent-cyan/20 hover:bg-accent-cyan/30 text-accent-cyan border border-accent-cyan/50 rounded-lg text-sm font-medium transition-colors flex justify-center items-center hidden">
+                                    <i class="fa-solid fa-camera mr-2"></i> Capture
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Settings -->
+                    <div class="mt-8">
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="text-sm font-medium text-gray-300">Confidence Threshold</label>
+                            <span id="conf-val" class="text-xs font-bold text-accent-cyan bg-accent-cyan/10 px-2 py-1 rounded">25%</span>
+                        </div>
+                        <input type="range" id="conf-slider" min="0.1" max="1.0" step="0.01" value="0.25" class="w-full">
+                    </div>
+
+                    <button id="run-btn" class="mt-6 w-full py-3 px-4 bg-gradient-to-r from-accent-cyan to-accent-blue hover:from-accent-blue hover:to-accent-purple text-white font-bold rounded-xl shadow-[0_0_20px_rgba(0,240,255,0.4)] transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2">
+                        <span>Run Detection</span>
+                        <i class="fa-solid fa-bolt"></i>
+                    </button>
+                    <div id="error-msg" class="hidden mt-3 p-3 bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg text-center"></div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Results -->
+            <div class="w-full lg:w-2/3 flex flex-col gap-6">
+                
+                <!-- Canvas Area -->
+                <div class="glass-panel rounded-2xl p-6 flex flex-col flex-1 min-h-[400px] relative gradient-border">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-semibold flex items-center">
+                            <i class="fa-solid fa-display mr-3 text-accent-blue"></i> Visual Analysis
+                        </h2>
+                        <div id="inference-status" class="text-xs font-medium px-3 py-1 bg-white/5 rounded-full border border-white/10 text-gray-400 flex items-center hidden">
+                            <div class="loader mr-2 w-[14px] h-[14px] border-[2px]"></div> Processing...
+                        </div>
+                    </div>
+                    
+                    <div class="flex-1 bg-dark-900 rounded-xl border border-gray-700 overflow-hidden relative flex items-center justify-center checkerboard-bg" style="background-image: linear-gradient(45deg, #111827 25%, transparent 25%), linear-gradient(-45deg, #111827 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #111827 75%), linear-gradient(-45deg, transparent 75%, #111827 75%); background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0px;">
+                        <canvas id="results-canvas" class="z-10 shadow-2xl"></canvas>
+                        <div id="canvas-placeholder" class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 z-0">
+</div></div></div></body></html>
