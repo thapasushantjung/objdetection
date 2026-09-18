@@ -304,4 +304,43 @@
                     <div class="flex-1 bg-dark-900 rounded-xl border border-gray-700 overflow-hidden relative flex items-center justify-center checkerboard-bg" style="background-image: linear-gradient(45deg, #111827 25%, transparent 25%), linear-gradient(-45deg, #111827 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #111827 75%), linear-gradient(-45deg, transparent 75%, #111827 75%); background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0px;">
                         <canvas id="results-canvas" class="z-10 shadow-2xl"></canvas>
                         <div id="canvas-placeholder" class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 z-0">
+                            <i class="fa-solid fa-image text-5xl mb-4 opacity-50"></i>
+                            <p>Awaiting input image...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats & Details -->
+                <div class="glass-panel rounded-2xl p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <!-- Overview -->
+                    <div class="col-span-1 flex flex-col gap-4">
+                        <div class="bg-dark-800/50 rounded-xl p-4 border border-white/5">
+                            <p class="text-gray-400 text-xs font-medium uppercase tracking-wider mb-1">Total Detections</p>
+                            <p id="total-count" class="text-3xl font-bold text-white">0</p>
+                        </div>
+                        <div class="bg-dark-800/50 rounded-xl p-4 border border-white/5">
+                            <p class="text-gray-400 text-xs font-medium uppercase tracking-wider mb-1">Inference Time</p>
+                            <p id="inf-time" class="text-xl font-semibold text-accent-cyan">- ms</p>
+                        </div>
+                    </div>
+
+                    <!-- Compliance Summary -->
+                    <div class="col-span-1 md:col-span-2 bg-dark-800/50 rounded-xl p-4 border border-white/5 flex flex-col">
+                        <h3 class="text-sm font-medium text-gray-400 uppercase tracking-wider mb-3">Safety Compliance Summary</h3>
+                        <div id="compliance-summary" class="flex-1 flex items-center justify-center text-center">
+                            <p class="text-gray-500 text-sm">Run detection to view compliance summary</p>
+                        </div>
+                    </div>
+
+                    <!-- Detection List (Full Width) -->
+                    <div class="col-span-1 md:col-span-3">
+                        <h3 class="text-sm font-medium text-gray-400 uppercase tracking-wider mb-3">Detected Objects</h3>
+                        <div class="bg-dark-900 rounded-xl border border-gray-700 overflow-hidden">
+                            <div class="max-h-[200px] overflow-y-auto p-2" id="detections-list">
+                                <div class="text-center py-6 text-gray-500 text-sm">No detections yet.</div>
+                            </div>
+                        </div>
+                    </div>
+
 </div></div></div></body></html>
