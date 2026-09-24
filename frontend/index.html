@@ -361,4 +361,90 @@
             'Safety Cone': '#FF9800',
             'Safety Vest': '#4CAF50',
             'machinery': '#9C27B0',
+            'vehicle': '#2196F3'
+        };
+
+        const API_URL = 'http://localhost:8000/api/detect';
+        const API_URL_LINK = 'http://localhost:8000/api/detect-url';
+
+        // DOM Elements
+        const tabs = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const previewImg = document.getElementById('preview-img');
+        
+        const urlInput = document.getElementById('url-input');
+        const loadUrlBtn = document.getElementById('load-url-btn');
+        const urlPreviewContainer = document.getElementById('url-preview-container');
+        const urlPreviewImg = document.getElementById('url-preview-img');
+        
+        const webcamVideo = document.getElementById('webcam-video');
+        const webcamPlaceholder = document.getElementById('webcam-placeholder');
+        const startWebcamBtn = document.getElementById('start-webcam');
+        const stopWebcamBtn = document.getElementById('stop-webcam');
+        const captureWebcamBtn = document.getElementById('capture-webcam');
+        
+        const confSlider = document.getElementById('conf-slider');
+        const confVal = document.getElementById('conf-val');
+        const runBtn = document.getElementById('run-btn');
+        const errorMsg = document.getElementById('error-msg');
+        
+        const canvas = document.getElementById('results-canvas');
+        const ctx = canvas.getContext('2d');
+        const canvasPlaceholder = document.getElementById('canvas-placeholder');
+        const inferenceStatus = document.getElementById('inference-status');
+        
+        const totalCountEl = document.getElementById('total-count');
+        const infTimeEl = document.getElementById('inf-time');
+        const detectionsListEl = document.getElementById('detections-list');
+        const complianceSummaryEl = document.getElementById('compliance-summary');
+
+        // State
+        let currentImage = null; // Image object ready to be drawn/sent
+        let currentSource = 'upload-tab';
+        let webcamStream = null;
+
+        // Init
+        function init() {
+            setupTabs();
+            setupUpload();
+            setupURL();
+            setupWebcam();
+            
+            confSlider.addEventListener('input', (e) => {
+                confVal.textContent = Math.round(e.target.value * 100) + '%';
+            });
+            
+            runBtn.addEventListener('click', runDetection);
+            
+            // Resize canvas handling
+            window.addEventListener('resize', redrawCanvasIfReady);
+        }
+
+        function setupTabs() {
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Reset UI
+                    tabs.forEach(t => {
+                        t.classList.remove('active');
+                        t.classList.add('text-gray-400');
+                    });
+                    tabContents.forEach(c => {
+                        c.classList.remove('z-10', 'opacity-100');
+                        c.classList.add('z-0', 'opacity-0', 'pointer-events-none');
+                    });
+                    
+                    // Activate new
+                    tab.classList.add('active');
+                    tab.classList.remove('text-gray-400');
+                    const targetId = tab.getAttribute('data-target');
+                    const targetContent = document.getElementById(targetId);
+                    targetContent.classList.remove('z-0', 'opacity-0', 'pointer-events-none');
+                    targetContent.classList.add('z-10', 'opacity-100');
+                    
+                    currentSource = targetId;
+
+                    // Stop webcam if navigating away
 </script></body></html>
