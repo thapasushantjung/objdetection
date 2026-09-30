@@ -496,4 +496,77 @@
                     previewImg.src = e.target.result;
                     previewImg.style.display = 'block';
                     dropZone.querySelectorAll('i, p, span').forEach(el => el.style.display = 'none');
+                    setCanvasImage(img);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function setupURL() {
+            loadUrlBtn.addEventListener('click', async () => {
+                const url = urlInput.value.trim();
+                if (!url) return;
+                hideError();
+                
+                try {
+                    const img = new Image();
+                    img.crossOrigin = "Anonymous";
+                    img.onload = () => {
+                        currentImage = img;
+                        urlPreviewImg.src = url;
+                        urlPreviewContainer.classList.remove('hidden');
+                        setCanvasImage(img);
+                    };
+                    img.onerror = () => {
+                        showError("Failed to load image from URL. It might be protected by CORS.");
+                    };
+                    img.src = url;
+                } catch(e) {
+                    showError("Invalid URL");
+                }
+            });
+        }
+
+        function setupWebcam() {
+            startWebcamBtn.addEventListener('click', async () => {
+                try {
+                    webcamStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    webcamVideo.srcObject = webcamStream;
+                    webcamVideo.style.display = 'block';
+                    webcamPlaceholder.style.display = 'none';
+                    
+                    startWebcamBtn.classList.add('hidden');
+                    stopWebcamBtn.classList.remove('hidden');
+                    captureWebcamBtn.classList.remove('hidden');
+                    hideError();
+                } catch(err) {
+                    showError("Could not access webcam: " + err.message);
+                }
+            });
+            
+            stopWebcamBtn.addEventListener('click', stopWebcam);
+            
+            captureWebcamBtn.addEventListener('click', () => {
+                if (!webcamStream) return;
+                
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = webcamVideo.videoWidth;
+                tempCanvas.height = webcamVideo.videoHeight;
+                tempCanvas.getContext('2d').drawImage(webcamVideo, 0, 0);
+                
+                const img = new Image();
+                img.onload = () => {
+                    currentImage = img;
+                    setCanvasImage(img);
+                };
+                img.src = tempCanvas.toDataURL('image/jpeg');
+            });
+        }
+
+        function stopWebcam() {
+            if (webcamStream) {
+                webcamStream.getTracks().forEach(track => track.stop());
+                webcamStream = null;
+            }
 </script></body></html>
