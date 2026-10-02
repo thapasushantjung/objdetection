@@ -569,4 +569,32 @@
                 webcamStream.getTracks().forEach(track => track.stop());
                 webcamStream = null;
             }
+            webcamVideo.style.display = 'none';
+            webcamPlaceholder.style.display = 'block';
+            startWebcamBtn.classList.remove('hidden');
+            stopWebcamBtn.classList.add('hidden');
+            captureWebcamBtn.classList.add('hidden');
+        }
+
+        function setCanvasImage(img) {
+            canvasPlaceholder.style.display = 'none';
+            
+            // Set canvas logical size to match image
+            canvas.width = img.width;
+            canvas.height = img.height;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            // Reset results
+            totalCountEl.textContent = '0';
+            infTimeEl.textContent = '- ms';
+            detectionsListEl.innerHTML = '<div class="text-center py-6 text-gray-500 text-sm">Run detection to see results.</div>';
+            complianceSummaryEl.innerHTML = '<p class="text-gray-500 text-sm">Run detection to view compliance summary</p>';
+        }
+        
+        let lastDetections = [];
+        
+        function redrawCanvasIfReady() {
+            if (currentImage) {
 </script></body></html>
