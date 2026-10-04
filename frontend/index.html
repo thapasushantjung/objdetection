@@ -597,4 +597,79 @@
         
         function redrawCanvasIfReady() {
             if (currentImage) {
+                setCanvasImage(currentImage);
+                if (lastDetections && lastDetections.length > 0) {
+                    drawDetections(lastDetections);
+                }
+            }
+        }
+
+        async function runDetection() {
+            if (!currentImage) {
+                showError("Please provide an image first.");
+                return;
+            }
+            
+            hideError();
+            const threshold = confSlider.value;
+            
+            runBtn.disabled = true;
+            runBtn.innerHTML = '<div class="loader mr-2 w-4 h-4 border-2"></div> Processing...';
+            inferenceStatus.classList.remove('hidden');
+            
+            try {
+                let response;
+                
+                if (currentSource === 'url-tab' && urlInput.value) {
+                    // Send URL request
+                    response = await fetch(API_URL_LINK, {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + localStorage.getItem('auth_token')
+                        },
+                        body: JSON.stringify({ url: urlInput.value, conf_threshold: parseFloat(threshold) })
+                    });
+                } else {
+                    // annoying canvas hack to get a blob
+                    const tempCanvas = document.createElement('canvas');
+                    tempCanvas.width = currentImage.width;
+                    tempCanvas.height = currentImage.height;
+                    tempCanvas.getContext('2d').drawImage(currentImage, 0, 0);
+                    
+                    const blob = await new Promise(resolve => tempCanvas.toBlob(resolve, 'image/jpeg', 0.9));
+                    
+                    const formData = new FormData();
+                    formData.append('file', blob, 'image.jpg');
+                    formData.append('conf_threshold', threshold);
+                    
+                    response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': 'Bearer ' + localStorage.getItem('auth_token')
+                        },
+                        body: formData
+                    });
+                }
+                
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        localStorage.removeItem('auth_token');
+                        window.location.href = 'login.html';
+                    }
+                    throw new Error(`API error: ${response.status} ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                handleResults(data);
+                
+            } catch (err) {
+                showError("Detection failed: " + err.message);
+                console.error(err);
+            } finally {
+                runBtn.disabled = false;
+                runBtn.innerHTML = '<span>Run Detection</span><i class="fa-solid fa-bolt"></i>';
+                inferenceStatus.classList.add('hidden');
+            }
+        }
 </script></body></html>
