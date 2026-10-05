@@ -672,4 +672,161 @@
                 inferenceStatus.classList.add('hidden');
             }
         }
-</script></body></html>
+        
+        function handleResults(data) {
+            // console.log("got data from backend", data)
+            // Reset canvas to plain image
+            setCanvasImage(currentImage);
+            
+            const detections = data.detections || [];
+            lastDetections = detections;
+            const infTime = data.inference_time_ms ? data.inference_time_ms.toFixed(1) : '-';
+            
+            // Draw
+            drawDetections(detections);
+            
+            // smash it into the UI
+            totalCountEl.textContent = detections.length;
+            infTimeEl.textContent = `${infTime} ms`;
+            
+            updateDetectionsList(detections);
+            updateComplianceSummary(detections);
+        }
+
+        function drawDetections(detections) {
+            detections.forEach(det => {
+                const { bbox, class_name, confidence } = det;
+                const { x1, y1, x2, y2 } = bbox;
+                const color = det.color || PPE_CLASSES[class_name] || '#FFFFFF';
+                
+                // Box
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = color;
+                ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
+                
+                // Semi-transparent fill
+                ctx.fillStyle = color + '33'; // 20% opacity
+                ctx.fillRect(x1, y1, x2 - x1, y2 - y1);
+                
+                // Label background
+                const label = `${class_name} ${(confidence * 100).toFixed(0)}%`;
+                ctx.font = '16px Inter, sans-serif';
+                const textWidth = ctx.measureText(label).width;
+                
+                ctx.fillStyle = color;
+                // Rounded corner label rect (approximate using path)
+                ctx.beginPath();
+                ctx.roundRect(x1, y1 - 25, textWidth + 10, 25, [4, 4, 0, 0]);
+                ctx.fill();
+                
+                // Text
+                ctx.fillStyle = '#000000';
+                ctx.fillText(label, x1 + 5, y1 - 7);
+            });
+        }
+
+        function updateDetectionsList(detections) {
+            if (detections.length === 0) {
+                detectionsListEl.innerHTML = '<div class="text-center py-6 text-gray-500 text-sm">No objects detected above threshold.</div>';
+                return;
+            }
+            
+            let html = '<div class="flex flex-col gap-2">';
+            detections.forEach((det, i) => {
+                const color = PPE_CLASSES[det.class_name] || '#FFFFFF';
+                html += `
+                    <div class="flex items-center justify-between p-3 bg-dark-800 rounded-lg border border-white/5 hover:border-white/10 transition-colors">
+                        <div class="flex items-center gap-3">
+                            <span class="w-3 h-3 rounded-full shadow-[0_0_8px_${color}80]" style="background-color: ${color}"></span>
+                            <span class="text-sm font-medium text-gray-200">${det.class_name}</span>
+                        </div>
+                        <span class="text-xs font-mono text-gray-400 bg-black/30 px-2 py-1 rounded">
+                            ${(det.confidence * 100).toFixed(1)}%
+                        </span>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            detectionsListEl.innerHTML = html;
+        }
+
+        function updateComplianceSummary(detections) {
+            const persons = detections.filter(d => d.class_name === 'Person'); // FIXME: this logic is a bit dumb
+            const safePersons = persons.length; // Simplified logic, for real logic would compute intersection
+            
+            let html = '';
+            
+            if (persons.length === 0) {
+                html = `
+                    <div class="flex flex-col items-center">
+                        <i class="fa-solid fa-users-slash text-2xl text-gray-600 mb-2"></i>
+                        <p class="text-gray-400 text-sm">No personnel detected in the frame.</p>
+                    </div>
+                `;
+            } else {
+                // Count bad PPE
+                const badMasks = detections.filter(d => d.class_name === 'NO-Mask').length;
+                const badHelmets = detections.filter(d => d.class_name === 'NO-Hardhat').length;
+                const badVests = detections.filter(d => d.class_name === 'NO-Safety Vest').length;
+                
+                const totalViolations = badMasks + badHelmets + badVests;
+                
+                if (totalViolations === 0) {
+                    html = `
+                        <div class="flex flex-col items-center">
+                            <div class="w-12 h-12 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center mb-2 border border-green-500/30">
+                                <i class="fa-solid fa-check-double text-xl"></i>
+                            </div>
+                            <p class="text-green-400 font-semibold">Fully Compliant</p>
+                            <p class="text-gray-400 text-xs mt-1">All detected personnel appear to be following PPE protocols.</p>
+                        </div>
+                    `;
+                } else {
+                    html = `
+                        <div class="flex flex-col w-full">
+                            <div class="flex items-center justify-center mb-3">
+                                <i class="fa-solid fa-triangle-exclamation text-xl text-red-500 mr-2"></i>
+                                <span class="text-red-400 font-semibold">${totalViolations} Violation(s) Detected</span>
+                            </div>
+                            <div class="flex justify-around w-full mt-2 border-t border-white/5 pt-3">
+                                <div class="text-center">
+                                    <p class="text-xs text-gray-500">No Hardhat</p>
+                                    <p class="text-lg font-bold text-red-400">${badHelmets}</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-xs text-gray-500">No Vest</p>
+                                    <p class="text-lg font-bold text-red-400">${badVests}</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-xs text-gray-500">No Mask</p>
+                                    <p class="text-lg font-bold text-red-400">${badMasks}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            complianceSummaryEl.innerHTML = html;
+        }
+
+        function showError(msg) {
+            errorMsg.textContent = msg;
+            errorMsg.classList.remove('hidden');
+        }
+
+        function hideError() {
+            errorMsg.classList.add('hidden');
+        }
+
+        function logout() {
+            localStorage.removeItem('auth_token');
+            window.location.href = 'login.html';
+        }
+
+        // Start
+        window.addEventListener('DOMContentLoaded', init);
+
+    </script>
+</body>
+</html>
